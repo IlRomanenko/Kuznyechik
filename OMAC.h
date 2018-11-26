@@ -4,49 +4,50 @@
 
 static block_t OMAC_key1, OMAC_key2;
 
+__uint128_t cast_reversed(const block_t data) {
+    static uint8_t arr[16];
+    memcpy(arr, data, 16);
+    for(int i = 0; i < 8; i++) {
+        std::swap(arr[i], arr[15 - i]);
+    }
+    return *((__uint128_t*)arr);
+}
+
+void reverse_cast_reversed(block_t &data, __uint128_t value) {
+    data = (uint8_t*)&value;
+    for (int i = 0; i < 8; ++i) {
+        std::swap(data[i], data[15 - i]);
+    }
+}
+
 void init_OMAC() {
-    uint8_t B[16];
-    memset(B, 0, 16);
-    *(B + 15) = 0b1010111;
+    __uint128_t B128 = 0b10000111;
 
     auto R = new uint8_t[16];
+    memset(R, 0, 16);
     OMAC_key1 = new uint8_t[16];
     OMAC_key2 = new uint8_t[16];
 
     R = encode(R);
     print_hex(R, 16);
-    __uint128_t Ruint = *((__uint128_t*)R);
+    __uint128_t Ruint = cast_reversed(R);
 
-    auto t1 = (uint64_t )(Ruint >> 64);
-    auto t2 = (uint64_t )((Ruint << 64) >> 64);
 
-    auto t3 = (__uint128_t)t1 << 64 | t2;
-    auto t4 = t3 * 2;
-    auto t5 = (__uint128_t)(t1 * 2) << 64 | (t2 * 2);
+    __uint128_t K1__ = (Ruint << 1);
+    K1__ ^= ((__int128_t)Ruint < 0 ? B128 : 0);
 
-    R = (uint8_t*)(&Ruint);
-    print_hex(R, 16);
-    if ((Ruint >> 127) == 0) {
-        *((__uint128_t*)OMAC_key1) = Ruint << 1;
-    } else {
-        auto tt = Ruint * 2;
-        R = (uint8_t*)(&tt);
-        print_hex(R, 16);
-        memcpy(OMAC_key1, add2(R, B), 16);
-    }
+    __uint128_t K2__ = K1__ << 1;
+    K2__ ^= ((__int128_t)K1__ < 0 ? B128 : 0);
+
+    reverse_cast_reversed(R, K1__);
+    memcpy(OMAC_key1, R, 16);
+
+    reverse_cast_reversed(R, K2__);
+    memcpy(OMAC_key2, R, 16);
 
     print_hex(OMAC_key1, 16);
-    memcpy(R, OMAC_key1, 16);
-
-    Ruint = *((__uint128_t*)R);
-    if ((Ruint >> 127) == 0) {
-        *((__uint128_t*)OMAC_key2) = Ruint << 1;
-    } else {
-        Ruint = Ruint << 1;
-        R = (uint8_t*)(&Ruint);
-        memcpy(OMAC_key2, add2(R, B), 16);
-    }
     print_hex(OMAC_key2, 16);
+
 }
 
 block_t OMAC(block_t data, int length, int s) {
@@ -68,9 +69,9 @@ block_t OMAC(block_t data, int length, int s) {
     }
     uint8_t *premac = nullptr;
     if (length % 16 == 0) {
-        premac = encode(add2(add2(C, copied_data + (n + 1) * 16), OMAC_key1));
+        premac = encode(add2(add2(C, copied_data + n * 16), OMAC_key1));
     } else {
-        premac = encode(add2(add2(C, copied_data + (n + 1) * 16), OMAC_key2));
+        premac = encode(add2(add2(C, copied_data + n * 16), OMAC_key2));
     }
 
     delete[] copied_data;
