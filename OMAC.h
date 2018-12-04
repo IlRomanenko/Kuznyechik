@@ -33,16 +33,16 @@ void init_OMAC() {
     __uint128_t Ruint = cast_reversed(R);
 
 
-    __uint128_t K1__ = (Ruint << 1);
-    K1__ ^= ((__int128_t)Ruint < 0 ? B128 : 0);
+    __uint128_t K1 = (Ruint << 1);
+    K1 ^= ((__int128_t)Ruint < 0 ? B128 : 0);
 
-    __uint128_t K2__ = K1__ << 1;
-    K2__ ^= ((__int128_t)K1__ < 0 ? B128 : 0);
+    __uint128_t K2 = K1 << 1;
+    K2 ^= ((__int128_t)K1 < 0 ? B128 : 0);
 
-    reverse_cast_reversed(R, K1__);
+    reverse_cast_reversed(R, K1);
     memcpy(OMAC_key1, R, 16);
 
-    reverse_cast_reversed(R, K2__);
+    reverse_cast_reversed(R, K2);
     memcpy(OMAC_key2, R, 16);
 
     print_hex(OMAC_key1, 16);
