@@ -72,7 +72,7 @@ void test_omac() {
 
     auto ex = parse_hex_string("1122334455667700ffeeddccbbaa998800112233445566778899aabbcceeff0a112233445566778899aabbcceeff0a002233445566778899aabbcceeff0a0011");
     print_hex(ex, 16 * 4);
-    print_hex(OMAC(ex, 16 * 4, 16), 16);
+    print_hex(OMAC(ex, 16 * 4, 16), 16 * 4);
 }
 
 void test_ctr() {
@@ -91,7 +91,7 @@ void test_ctr() {
                                "445566778899AABBCCEEFF0A00112233"\
                                "5566778899AABBCCEEFF0A0011223344");
     print_hex(ex, 16 * 7);
-    print_hex(ctr(ex, 16 * 7, 32, IV), 16);
+    print_hex(ctr(ex, 16 * 7, 32, IV), 16 * 7);
 
 }
 

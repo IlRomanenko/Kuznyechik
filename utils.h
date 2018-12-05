@@ -35,11 +35,13 @@ uint8_t* concat(const uint8_t* str, int length) {
 
 uint8_t* parse_hex_string(const std::string& str) {
     auto result = new uint8_t[str.length()];
+    char chr;
     for (size_t i = 0; i < str.length(); i++) {
-        if (isdigit(str[i])) {
-            result[i] = (uint8_t)(str[i] - '0');
+        chr = (char)tolower(str[i]);
+        if (isdigit(chr)) {
+            result[i] = (uint8_t)(chr - '0');
         } else {
-            result[i] = (uint8_t)(str[i] - 'a' + 10);
+            result[i] = (uint8_t)(chr - 'a' + 10);
         }
     }
     return concat(result, (int)str.length());
@@ -60,7 +62,7 @@ T* add2(T *block, T *a) {
     return block;
 }
 
-__uint128_t cast_reversed(const block_t data) {
+__uint128_t convert128(const block_t data) {
     static uint8_t arr[16];
     memcpy(arr, data, 16);
     for(int i = 0; i < 8; i++) {
