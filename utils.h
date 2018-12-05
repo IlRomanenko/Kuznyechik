@@ -59,3 +59,19 @@ T* add2(T *block, T *a) {
     }
     return block;
 }
+
+__uint128_t cast_reversed(const block_t data) {
+    static uint8_t arr[16];
+    memcpy(arr, data, 16);
+    for(int i = 0; i < 8; i++) {
+        std::swap(arr[i], arr[15 - i]);
+    }
+    return *((__uint128_t*)arr);
+}
+
+void deconvert128(const __uint128_t value, uint8_t *data) {
+    memcpy(data, (uint8_t*)(&value), 16);
+    for (int i = 0; i < 8; i++) {
+        std::swap(data[i], data[15 - i]);
+    }
+}

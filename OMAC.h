@@ -4,22 +4,6 @@
 
 static block_t OMAC_key1, OMAC_key2;
 
-__uint128_t cast_reversed(const block_t data) {
-    static uint8_t arr[16];
-    memcpy(arr, data, 16);
-    for(int i = 0; i < 8; i++) {
-        std::swap(arr[i], arr[15 - i]);
-    }
-    return *((__uint128_t*)arr);
-}
-
-void reverse_cast_reversed(block_t &data, __uint128_t value) {
-    data = (uint8_t*)&value;
-    for (int i = 0; i < 8; ++i) {
-        std::swap(data[i], data[15 - i]);
-    }
-}
-
 void init_OMAC() {
     __uint128_t B128 = 0b10000111;
 
@@ -39,10 +23,10 @@ void init_OMAC() {
     __uint128_t K2 = K1 << 1;
     K2 ^= ((__int128_t)K1 < 0 ? B128 : 0);
 
-    reverse_cast_reversed(R, K1);
+    deconvert128(K1, R);
     memcpy(OMAC_key1, R, 16);
 
-    reverse_cast_reversed(R, K2);
+    deconvert128(K2, R);
     memcpy(OMAC_key2, R, 16);
 
     print_hex(OMAC_key1, 16);

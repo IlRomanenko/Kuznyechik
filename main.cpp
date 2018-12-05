@@ -9,6 +9,7 @@
 #include "kuznyechick.h"
 #include "tests.h"
 #include "OMAC.h"
+#include "CTR.h"
 #include <ctime>
 
 
@@ -74,10 +75,31 @@ void test_omac() {
     print_hex(OMAC(ex, 16 * 4, 16), 16);
 }
 
+void test_ctr() {
+
+    init_r_conversion_table();
+    fast::init_fast_conversion(pi);
+    init_c_array();
+    init_keys(parse_hex_string("8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef"));
+
+    auto IV = parse_hex_string("1234567890ABCEF0");
+    auto ex = parse_hex_string("1122334455667700FFEEDDCCBBAA9988"\
+                               "00112233445566778899AABBCCEEFF0A"\
+                               "112233445566778899AABBCCEEFF0A00"\
+                               "2233445566778899AABBCCEEFF0A0011"\
+                               "33445566778899AABBCCEEFF0A001122"\
+                               "445566778899AABBCCEEFF0A00112233"\
+                               "5566778899AABBCCEEFF0A0011223344");
+    print_hex(ex, 16 * 7);
+    print_hex(ctr(ex, 16 * 7, 32, IV), 16);
+
+}
+
 int main() {
 
 //    test_all();
 //    test_speed();
-    test_omac();
+//    test_omac();
+    test_ctr();
     return 0;
 }
