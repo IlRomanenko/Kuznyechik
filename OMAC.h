@@ -14,7 +14,7 @@ void init_OMAC() {
 
     R = encode(R);
     print_hex(R, 16);
-    __uint128_t Ruint = cast_reversed(R);
+    __uint128_t Ruint = convert128(R);
 
 
     __uint128_t K1 = (Ruint << 1);

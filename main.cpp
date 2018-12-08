@@ -72,7 +72,7 @@ void test_omac() {
 
     auto ex = parse_hex_string("1122334455667700ffeeddccbbaa998800112233445566778899aabbcceeff0a112233445566778899aabbcceeff0a002233445566778899aabbcceeff0a0011");
     print_hex(ex, 16 * 4);
-    print_hex(OMAC(ex, 16 * 4, 16), 16 * 4);
+    print_hex(OMAC(ex, 16 * 4, 16), 16);
 }
 
 void test_ctr() {
@@ -99,7 +99,7 @@ int main() {
 
 //    test_all();
 //    test_speed();
-//    test_omac();
-    test_ctr();
+    test_omac();
+//    test_ctr();
     return 0;
 }

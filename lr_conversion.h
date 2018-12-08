@@ -12,7 +12,6 @@ uint8_t r_calculated[16][256];
 
 __uint128_t r_calculated_best[16][256];
 uint64_t r_calculated_best_64[16][256][2];
-uint64_t r_calculated_best_64_keys[10][16][256][2];
 
 
 uint8_t multiply(uint8_t first, uint8_t second) {
